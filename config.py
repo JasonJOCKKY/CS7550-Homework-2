@@ -1,5 +1,5 @@
 import numpy as np
-import enum
+
 
 # The world is a 2-D grid with 4x5 = 20 rooms.
 GRID_WIDTH, GRID_HEIGH = 4, 5
