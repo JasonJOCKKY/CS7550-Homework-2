@@ -2,7 +2,7 @@ import numpy as np
 import enum
 
 # The world is a 2-D grid with 4x5 = 20 rooms.
-GRID_WIDTH, rooms_HEIGH = 4, 5
+GRID_WIDTH, GRID_HEIGH = 4, 5
 
 # Instance 1: Dirty squares: (1,2), (2,4), (3,5).
 # Instance 2: Dirty squares: (1,2), (2,1), (2,4), (3,3), (4,4).
@@ -37,7 +37,7 @@ def init_rooms(instance_id: int) -> np.array:
         vacuum-cleaner world. The 2D array is consisted of elements 0 or 1 which
         representing the rooms is clean or dirty respectively. 
   """
-  rooms_np = np.zeros((GRID_WIDTH, rooms_HEIGH))
+  rooms_np = np.zeros((GRID_WIDTH, GRID_HEIGH))
   candidate_dirty_squares = DIRTY_SQUARES[instance_id]
   for i, j in candidate_dirty_squares:
     rooms_np[i - 1][j - 1] = 1
