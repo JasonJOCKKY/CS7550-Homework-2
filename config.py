@@ -4,11 +4,16 @@ import numpy as np
 # The world is a 2-D grid with 4x5 = 20 rooms.
 GRID_WIDTH, GRID_HEIGH = 4, 5
 
-# Instance 1: Dirty squares: (1,2), (2,4), (3,5).
-# Instance 2: Dirty squares: (1,2), (2,1), (2,4), (3,3), (4,4).
+# Instance 1: Dirty squares: (1,2), (2,4), (3,5). Agent Location: (2,2)
+# Instance 2: Dirty squares: (1,2), (2,1), (2,4), (3,3), (4,4). Agent Location: (3, 2)
 DIRTY_SQUARES = {
     1: [(1, 2), (2, 4), (3, 5)],
     2: [(1, 2), (2, 1), (2, 4), (3, 3), (4, 4)]
+}
+
+AGENT_LOCATIONS = {
+  1: (2, 2),
+  2: (3, 2)
 }
 
 # A dictionary of ation and cost.
@@ -43,6 +48,20 @@ def init_rooms(instance_id: int) -> np.array:
     rooms_np[i - 1][j - 1] = 1
   return rooms_np
 
+def init_agent(instance_id: int) -> (int, int):
+  """Initializing the agent location.
+
+  Usage:
+    init_agent(1) for Instance 1.
+    init_agent(2) for Instance 2.
+  
+  Args:
+    instance_id: int, instance ID to initialize the dirt distribution.
+
+  Return:
+    A tuple of integers that represents the initial location of the agent on the 4x5 grid.
+  """
+  return AGENT_LOCATIONS[instance_id]
 
 def goal_test(rooms_np: np.array) -> bool:
   """Check whether all rooms are clean.
