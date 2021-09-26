@@ -1,5 +1,7 @@
-import config
+import decimal
+import config, time
 from pqdict import pqdict
+from decimal import Decimal
 
 class Node:
   def __init__(self, agent_location, dirty_squares, parent, action):
@@ -22,6 +24,7 @@ class Node:
     node = self
     solution = [] # [ str ] array of actions
     while node.parent is not None:
+      # print(f'path cost: {node.path_cost}, parent cost: {node.parent.path_cost}, config: {config.ACTION_COST[node.action][2]}')
       solution.insert(0, node.action)
       node = node.parent
     return solution
@@ -35,18 +38,37 @@ def uniform_cost_graph_search(instance_id):
       Array of locations representing the squence of actions, [ str ]
         return None if no solution is found
   """
+  # Solution tracking
+  sol_first_five_nodes = []
+  sol_nodes_expanded = 0
+  sol_nodes_generated = 0
+  sol_start_time = time.time()
+
   dirty_squares = config.DIRTY_SQUARES[instance_id]
   node = Node(config.init_agent(instance_id), dirty_squares, None, None)
   frontier = pqdict({node.state: node}, key=lambda x: x.path_cost)
   explored = set()
-
-  # Solution tracking
+  sol_nodes_generated += 1
 
   while len(frontier) > 0:
     node = frontier.popitem()[1]
+    sol_nodes_expanded += 1
+    if sol_nodes_expanded <= 5:
+      sol_first_five_nodes.append({
+        "agent_location": node.agent_location,
+        "dirty_squares": node.dirty_squares
+      })
+    
     if goal_check(node):
       # The solution is found
-      return node.generate_solution()
+      return {
+        "first_five_nodes": sol_first_five_nodes,
+        "nodes_expanded": sol_nodes_expanded,
+        "nodes_generated": sol_nodes_generated,
+        "execution_time": time.time() - sol_start_time,
+        "solution": node.generate_solution(),
+        "total_cost": node.path_cost
+      }
     explored.add(node.state)
 
     for (action,cost) in config.ACTION_COST.items():
@@ -59,6 +81,7 @@ def uniform_cost_graph_search(instance_id):
         if action == "suck" and child_location in child_dirty_squares:
           child_dirty_squares.remove(child_location)
         child = Node(child_location, child_dirty_squares, node, action)
+        sol_nodes_generated += 1
 
         # print(f'frontier: {list(frontier.keys())}')
         # print(f'child: {child.state}')
@@ -73,4 +96,7 @@ def uniform_cost_graph_search(instance_id):
 def goal_check(node):
   return len(node.dirty_squares) == 0
 
-print(uniform_cost_graph_search(2))
+result = uniform_cost_graph_search(2)
+print(f'a. First 5 nodes: {result["first_five_nodes"]}')
+print(f'b. Nodes Expanded: {result["nodes_expanded"]}, Nodes Generated: {result["nodes_generated"]}, Execution Time: {result["execution_time"]}')
+print(f'c. Solution: {result["solution"]}, Number of Moves: {len(result["solution"])}, Total Cost: { Decimal(result["total_cost"])}')
