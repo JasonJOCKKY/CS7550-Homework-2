@@ -1,3 +1,4 @@
+from typing import Tuple
 import numpy as np
 
 
@@ -20,7 +21,7 @@ AGENT_LOCATIONS = {
 # The key is actin. The valus is (move_in_row, move_in_column, cost)
 ACTION_COST = {
   "left": (0, -1, 1), 
-  'right': (0, 1, 0.9), 
+  "right": (0, 1, 0.9), 
   "up": (-1, 0, 0.8), 
   "down": (1, 0, 0.7), 
   "suck": (0, 0, 0.2), 
@@ -48,7 +49,7 @@ def init_rooms(instance_id: int) -> np.array:
     rooms_np[i - 1][j - 1] = 1
   return rooms_np
 
-def init_agent(instance_id: int) -> (int, int):
+def init_agent(instance_id: int):
   """Initializing the agent location.
 
   Usage:
