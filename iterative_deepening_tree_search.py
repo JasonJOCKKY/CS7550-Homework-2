@@ -46,10 +46,16 @@ def depth_limited_search(start_node, limit, result_record):
   """[summary]
 
     Args:
-        limit (int, optional): [description]. Defaults to 20.
+        start_node: Node.
+        limit: int, limit of depth.
+        result_record: Dict, dictionary of execution results.
+    
+    Returns:
+        result_record: Dict, updated dictionary of execution results.
     """
-
   def recursive_dls(node, limit, result_record):
+
+    # Stop the searching since it is time out (1 hrs).  
     if time.time() - result_record["execution_time"] > TIME_LIMIT:
       result_record["solution"] = None
       result_record["total_cost"] = None
@@ -58,7 +64,6 @@ def depth_limited_search(start_node, limit, result_record):
       return result_record
 
     if goal_check(node):
-
       result_record["solution"] = node.generate_solution()
       result_record["total_cost"] = node.path_cost
       result_record["execution_time"] = time.time(
@@ -76,20 +81,20 @@ def depth_limited_search(start_node, limit, result_record):
         })
 
       cutoff_occurred = False
+
+      # exppand the ndoe.
       for (action, cost) in config.ACTION_COST.items():
         child_location = (node.agent_location[0] + cost[0],
                           node.agent_location[1] + cost[1])
         child_dirty_squares = node.dirty_squares
-
         if (child_location[0] > 0 and child_location[0] <= config.GRID_WIDTH and
             child_location[1] > 0 and child_location[1] <= config.GRID_HEIGH):
-          # Generate the child
+          # Generate the child if child is not out of the grid.
           if action == "suck" and child_location in child_dirty_squares:
             child_dirty_squares.remove(child_location)
 
           child = Node(child_location, child_dirty_squares, node, action)
           result_record["nodes_generated"] += 1
-
           result = recursive_dls(child, limit - 1, result_record)
           if result == 'NotFound':
             cutoff_occurred = True
@@ -104,10 +109,10 @@ def iterative_deepening_tree_search(instance_id: int):
   """[summary]
 
     Args:
-        instance_id ([type]): [description]
+        instance_id: int, ID of instance. 
 
     Returns:
-        [type]: [description]
+        Dict: dictionary of exection results.
   """
   # Solution tracking
   result_record = {
