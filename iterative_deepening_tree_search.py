@@ -3,6 +3,8 @@ import config, time
 from pqdict import pqdict
 from decimal import Decimal
 
+# 3600 seconds
+TIME_LIMIT = 60*60
 
 class Node:
 
@@ -48,7 +50,12 @@ def depth_limited_search(start_node, limit, result_record):
     """
 
   def recursive_dls(node, limit, result_record):
-    # print(node.agent_location, limit)
+    if time.time() - result_record["execution_time"] > TIME_LIMIT:
+      result_record["solution"] = None
+      result_record["total_cost"] = None
+      result_record["execution_time"] = time.time(
+      ) - result_record["execution_time"]
+      return result_record
 
     if goal_check(node):
 
@@ -118,7 +125,7 @@ def iterative_deepening_tree_search(instance_id: int):
     start_node = Node(config.init_agent(instance_id), dirty_squares, None, None)
     result_record["nodes_generated"] += 1
 
-    print("[LOG] depth_limit: ", depth_limit)
+    # print("[LOG] depth_limit: ", depth_limit)
 
     result = depth_limited_search(start_node, depth_limit, result_record)
     if result != 'NotFound':
@@ -133,13 +140,17 @@ def main():
   result = iterative_deepening_tree_search(1)
   if result != 'NotFound':
     print("Instance #1 results:")
-    print(result)
+    print(f'a. First 5 nodes: {result["first_five_nodes"]}')
+    print(f'b. Nodes Expanded: {result["nodes_expanded"]}, Nodes Generated: {result["nodes_generated"]}, Execution Time: {result["execution_time"]}')
+    print(f'c. Solution: {result["solution"]}, Number of Moves: {len(result["solution"])}, Total Cost: { Decimal(result["total_cost"])}')
 
   # Instance 2
   result = iterative_deepening_tree_search(2)
   if result != 'NotFound':
     print("Instance #2 results:")
-    print(result)
+    print(f'a. First 5 nodes: {result["first_five_nodes"]}')
+    print(f'b. Nodes Expanded: {result["nodes_expanded"]}, Nodes Generated: {result["nodes_generated"]}, Execution Time: {result["execution_time"]}')
+    print(f'c. Solution: {result["solution"]}, Number of Moves: {len(result["solution"])}, Total Cost: { Decimal(result["total_cost"])}')
 
 
 if __name__ == "__main__":
