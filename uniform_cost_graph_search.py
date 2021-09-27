@@ -1,7 +1,5 @@
-import decimal
 import config, time
 from pqdict import pqdict
-from decimal import Decimal
 
 class Node:
   def __init__(self, agent_location, dirty_squares, parent, action):
@@ -96,7 +94,10 @@ def uniform_cost_graph_search(instance_id):
 def goal_check(node):
   return len(node.dirty_squares) == 0
 
-result = uniform_cost_graph_search(2)
-print(f'a. First 5 nodes: {result["first_five_nodes"]}')
-print(f'b. Nodes Expanded: {result["nodes_expanded"]}, Nodes Generated: {result["nodes_generated"]}, Execution Time: {result["execution_time"]}')
-print(f'c. Solution: {result["solution"]}, Number of Moves: {len(result["solution"])}, Total Cost: { Decimal(result["total_cost"])}')
+for i in range(2):
+  print()
+  result = uniform_cost_graph_search(i+1)
+  print(f'Uniform-Cost Graph Search, Instance {i+1}')
+  print(f'a. First 5 nodes: {result["first_five_nodes"]}')
+  print(f'b. Nodes Expanded: {result["nodes_expanded"]}, Nodes Generated: {result["nodes_generated"]}, Execution Time: {result["execution_time"]}')
+  print(f'c. Solution: {result["solution"]}, Number of Moves: {len(result["solution"])}, Total Cost: { format(result["total_cost"], ".2f") }')
