@@ -53,7 +53,7 @@ def uniform_cost_tree_search(instance_id):
   dirty_squares = config.DIRTY_SQUARES[instance_id]
   node = Node(config.init_agent(instance_id), dirty_squares, None, None)
   frontier = pqdict({node.state: node}, key=lambda x: x.path_cost)
-  #explored = set()
+
   sol_nodes_generated += 1
 
   while len(frontier) > 0:
@@ -79,31 +79,29 @@ def uniform_cost_tree_search(instance_id):
     #explored.add(node.state)
 
     for (action,cost) in config.ACTION_COST.items():
-      child_location = (node.agent_location[0]+cost[0], node.agent_location[1]+cost[1])
-      child_dirty_squares = node.dirty_squares
-      
-      if (child_location[0] > 0 and child_location[0] <= config.GRID_WIDTH 
-        and child_location[1] > 0 and child_location[1] <= config.GRID_HEIGH):
-        # Generate the child
-        if action == "suck" and child_location in child_dirty_squares:
-          child_dirty_squares.remove(child_location)
-        child = Node(child_location, child_dirty_squares, node, action)
-        sol_nodes_generated += 1
-
-         #print(f'frontier: {list(frontier.keys())}')
-         #print(f'child: {child.state}')
+        child_location = (node.agent_location[0]+cost[0], node.agent_location[1]+cost[1])
+        child_dirty_squares = node.dirty_squares
         
-        if child.state not in frontier:
-          frontier[child.state] = child
-        elif child.state in frontier and frontier[child.state].path_cost > child.path_cost:
-          frontier[child.state] = child
+        if (child_location[0] > 0 and child_location[0] <= config.GRID_WIDTH 
+          and child_location[1] > 0 and child_location[1] <= config.GRID_HEIGH):
+          # Generate the child
+          if action == "suck" and child_location in child_dirty_squares:
+            child_dirty_squares.remove(child_location)
+          child = Node(child_location, child_dirty_squares, node, action)
+
+          if child.state != node.state:
+            sol_nodes_generated += 1
+            frontier[child.state] = child
 
   return None
 
 def goal_check(node):
   return len(node.dirty_squares) == 0
 
-result = uniform_cost_tree_search(2)
-print(f'a. First 5 nodes: {result["first_five_nodes"]}')
-print(f'b. Nodes Expanded: {result["nodes_expanded"]}, Nodes Generated: {result["nodes_generated"]}, Execution Time: {result["execution_time"]}')
-print(f'c. Solution: {result["solution"]}, Number of Moves: {len(result["solution"])}, Total Cost: { Decimal(result["total_cost"])}')
+for i in range(2):
+  print()
+  result = uniform_cost_tree_search(i+1)
+  print(f'Uniform-Cost Tree Search, Instance {i+1}')
+  print(f'a. First 5 nodes: {result["first_five_nodes"]}')
+  print(f'b. Nodes Expanded: {result["nodes_expanded"]}, Nodes Generated: {result["nodes_generated"]}, Execution Time: {result["execution_time"]}')
+  print(f'c. Solution: {result["solution"]}, Number of Moves: {len(result["solution"])}, Total Cost: { format(result["total_cost"], ".2f") }')
