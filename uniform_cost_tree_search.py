@@ -4,10 +4,8 @@ Created on Sun Sep 26 18:41:29 2021
 
 @author: Iserl
 """
-import decimal
 import config, time
 from pqdict import pqdict
-from decimal import Decimal
 
 class Node:
   def __init__(self, agent_location, dirty_squares, parent, action):
